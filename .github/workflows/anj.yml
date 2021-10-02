@@ -1,0 +1,49 @@
+name: Windows2022
+
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: windows-2022
+    timeout-minutes: 9999
+
+    steps:
+    - name: Mendownload Ngrok.
+      run: |
+        Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+        Invoke-WebRequest https://raw.githubusercontent.com/NIndo123/GoogleCloud-RDP/main/start.bat -OutFile start.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/NIndo123/GoogleCloud-RDP/main/wallpaper.png -OutFile wallpaper.bmp
+        Invoke-WebRequest https://raw.githubusercontent.com/NIndo123/GoogleCloud-RDP/main/wallpaper.bat -OutFile wallpaper.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/NIndo123/GoogleCloud-RDP/main/loop.bat -OutFile loop.bat
+    - name: Mendownload tools shells kontol
+      run: |
+        Invoke-WebRequest https://gitlab.com/panelassw/shellmek/-/raw/main/AutoClicker.exe -OutFile AutoClicker.exe
+        Invoke-WebRequest https://gitlab.com/panelassw/shellmek/-/raw/main/u1902.exe -OutFile ulrasurf.exe
+        Invoke-WebRequest https://gitlab.com/panelassw/shellmek/-/raw/main/Brute_XML-RPC_WP.zip -OutFile Brute_XML-RPC_WP.zip
+        Invoke-WebRequest https://gitlab.com/panelassw/shellmek/-/raw/main/Dork_Maker_Scan.zip -OutFile Dork_Maker_Scan.zip
+    - name: Mendownload Launcher.
+      run: |
+        Invoke-WebRequest https://raw.githubusercontent.com/NIndo123/GoogleCloud-RDP/main/launcher/Node.js.lnk -OutFile Node.js.lnk
+    - name: Mengextract Ngrok File.
+      run: Expand-Archive ngrok.zip
+    - name: Connect Ke Akun Ngrok.
+      run: .\ngrok\ngrok.exe authtoken 1ynaM0wmKLrXY6pJdHqFJ7g7YyU_49KWYvayexgbq4dH7N3up
+    - name: Mengaktifkan Akses RDP + copy shell file.
+      run: | 
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+        copy wallpaper.bmp D:\a\wallpaper.bmp
+        copy wallpaper.bat D:\a\wallpaper.bat
+        copy Node.js.lnk C:\Users\Public\Desktop\Node.js.lnk
+        copy AutoClicker.exe C:\Users\Public\Desktop\AutoClicker.exe
+        copy ulrasurf.exe C:\Users\Public\Desktop\ulrasurf.exe
+        Expand-Archive -Path Brute_XML-RPC_WP.zip -DestinationPath C:\Users\Public\Desktop
+        Expand-Archive -Path Dork_Maker_Scan.zip -DestinationPath C:\Users\Public\Desktop
+    - name: Membuat Tunnel.
+      run: Start-Process Powershell -ArgumentList '-Noexit -Command ".\ngrok\ngrok.exe tcp --region ap 3389"'
+    - name: Connect Ke RDP Kamu CPU 2 Core - 7GB Ram - 255 SSD.
+      run: cmd /c start.bat
+    - name: Berhasil Dibuat! Anda Bisa Menutup Tab Sekarang.
+      run: cmd /c loop.bat
